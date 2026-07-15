@@ -44,6 +44,15 @@ const float VREF = 3.3;
 const float DIFF_THRESHOLD = 10.0;  //MAXIMUM ALLOWED DIFFERENCE (%)
 const unsigned long FAULT_DELAY_MS = 100;  //FAULT MUST PERSIST (ms)
 
+//Data Logging configuration
+
+const int MAX_SAMPLES = 1000; //Guarda hasta 1000 muestras
+float log_sensor1[MAX_SAMPLES];
+float log_sensor2[MAX_SAMPLES];
+unsigned long log_time[MAX_SAMPLES];
+int log_count = 0;
+bool logging_active = false;
+
 //Global variables
 
 LiquidCrystal_I2C lcd(LCD_ADDRESS, LCD_COLUMNS, LCD_ROWS);
@@ -81,15 +90,40 @@ void setup() {
   lcd.print("F-SAE T.4.2");
   delay(2000);
   lcd.clear();
+
+  //Logging
+  Serial.println("===APPS SYSTEM READY===");
+  Serial.println("Commands:");
+  Serial.println(" 'start' - Start logging");
+  Serial.println(" 'stop' - Stop logging");
+  Serial.println(" 'print' - Print logged data");
+  Serial.println(" 'clear' - Clear log buffer");
 }
 
 // MAIN LOOP
 
 void loop() {
+  //CHECK FOR SERIAL COMMANDS
+if (Serial.available()) {
+  String command = Serial.readStringUntil('\n');
+  command.trim();
+
+  if (command == "start") {
+    startLogging();
+  } else if (command == "stop") {
+    stopLogging();
+  } else if (command == "print") {
+    printLogData();
+  } else if (command == "clear") {
+    log_count = 0;
+    Serial.println("Log cleared");
+  }
+}
   readSensors();
   updateSafetyLogic();
   updateDisplay();
   printDebugInfo();
+  logData();
   delay(10);    // 100 Hz samplig rate
 }
 
@@ -174,8 +208,15 @@ void updateDisplay() {
   //Line 2: Motor status
   lcd.setCursor(0, 1);
 
-  if (motor_status) {
-   lcd.print("Motor: ON   ");
+  //Mostrar "REC" si esta grabando
+  if (logging_active) {
+    lcd.print("REC ");
+    lcd.print(log_count);
+    lcd.print("/");
+    lcd.print(MAX_SAMPLES);
+    lcd.print(" ");
+  } else if (motor_status) {
+      lcd.print("Motor: ON   ");
    // Show fault timer if activate
    if (fault_active) {
     lcd.setCursor(0, 1);
@@ -212,4 +253,39 @@ void printDebugInfo() {
     Serial.print("ms");
   }
   Serial.println();
+}
+
+void startLogging() {
+  log_count = 0;
+  logging_active = true;
+  Serial.println("DATA LOG: Started recording");
+}
+
+void stopLogging() {
+  logging_active = false;
+  Serial.println("DATA LOG: Stopped recording");
+  Serial.print("Total samples: ");
+  Serial.println(log_count);
+}
+
+void logData() {
+  if (logging_active && log_count < MAX_SAMPLES) {
+    log_sensor1[log_count] = sensor1_percent;
+    log_sensor2[log_count] = sensor2_percent;
+    log_time[log_count] = millis();
+    log_count++;
+  }
+}
+
+void printLogData() {
+  Serial.println("=== DATA LOG ===");
+  Serial.println("Time (ms), Sensor1 (%), Sensor2(%)");
+  for (int i = 0; i < log_count; i++) {
+    Serial.print(log_time[i]);
+    Serial.print(",");
+    Serial.print(log_sensor1[i]);
+    Serial.print(",");
+    Serial.println(log_sensor2[i]);
+  }
+  Serial.println("=== END LOG===");
 }
