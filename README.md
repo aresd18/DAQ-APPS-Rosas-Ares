@@ -56,15 +56,15 @@ El sistema implementa la siguiente lógica para garantizar la seguridad del vehi
 4. **Retardo:** Si la falla persiste ≥ 100 ms, se apaga el motor 
 5. **Recuperación:** La falla se resetea cuando los sensores vuelven a coincidir
 
-## 📊 Resultados de Pruebas
+## Resultados de Pruebas
 | Prueba | Sensor 1 | Sensor 2 | Diferencia | Resultado |
 |--------|----------|----------|------------|-----------|
-| 1 | 10% | 10% | 0% | ✅ Motor ON |
-| 2 | 10% | 11% | 1% | ✅ Motor ON |
-| 3 | 10% | 19% | 9% | ✅ Motor ON |
-| 4 | 10% | 20% | 10% | ❌ Motor OFF (100ms) |
-| 5 | 10% | 50% | 40% | ❌ Motor OFF (100ms) |
-| 6 | 20% | 20% | 0% | ✅ Motor ON (restablece) |
+| 1 | 10% | 10% | 0% | Motor ON |
+| 2 | 10% | 11% | 1% | Motor ON |
+| 3 | 10% | 19% | 9% |  Motor ON |
+| 4 | 10% | 20% | 10% |  Motor OFF (100ms) |
+| 5 | 10% | 50% | 40% |  Motor OFF (100ms) |
+| 6 | 20% | 20% | 0% |  Motor ON (restablece) |
 
 ### Visualización en LCD
 - **Línea 1:** "S1: XX% S2: XX%"
