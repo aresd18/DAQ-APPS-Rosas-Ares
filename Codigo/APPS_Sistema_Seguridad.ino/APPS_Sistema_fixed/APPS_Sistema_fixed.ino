@@ -236,15 +236,15 @@ void printDebugInfo() {
 
   Serial.print("V1:");
   Serial.print(sensor1_volt, 3);
-  Serial.print("|V2:");
+  Serial.print(",V2:");
   Serial.print(sensor2_volt, 3);
-  Serial.print("|%1:");
+  Serial.print(",%1:");
   Serial.print(sensor1_percent, 1);
-  Serial.print("|%2:");
+  Serial.print(",%2:");
   Serial.print(sensor2_percent, 1);
-  Serial.print("|Diff:");
+  Serial.print(",Diff:");
   Serial.print(difference, 1);
-  Serial.print("%|Motor:");
+  Serial.print("%,Motor:");
   Serial.print(motor_status ? "ON " : "OFF");
 
   if (fault_active) {
