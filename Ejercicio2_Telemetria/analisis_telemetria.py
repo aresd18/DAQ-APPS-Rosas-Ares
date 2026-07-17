@@ -321,7 +321,7 @@ if not nan_groups:
 
 print("\n2) VIOLACION FRENO + ACELERADOR:")
 
-umbral_freno = 1.0
+umbral_freno = 3.0
 umbral_acel = 10.0
 
 df_analisis['brake_bool'] = df_analisis['brake_pressure'] > umbral_freno
